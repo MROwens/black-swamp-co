@@ -41,7 +41,6 @@ const products = [
 let done = 0;
 for(let entry = 0; entry < products.length; entry++){
   products[entry].save(function(err, result){
-    console.log('ran');
     done++;
     if(done === products.length){
       exit();
@@ -51,5 +50,5 @@ for(let entry = 0; entry < products.length; entry++){
 
 function exit(){
   mongoose.disconnect();
-  console.log('exit');
+  console.log('Data Seeded');
 }
