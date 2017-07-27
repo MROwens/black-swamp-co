@@ -1,6 +1,7 @@
 const express = require('express');
 const Product = require('../models/product');
 const Cart = require('../models/cart');
+const stripe = require("stripe")("sk_test_RUZ8p3YSy0CssqkFy9r7zkI3");
 const router = express.Router();
 
 
@@ -33,33 +34,33 @@ router.get('/add-to-cart/:id', function(req, res, next){
 
 router.get('/shopping-cart', function(req, res, next){
   if(!req.session.cart){
-    return res.render('/shop/shopping-cart', {products: null});
+    return res.render('shop/shopping-cart', {products: null});
   }
   const cart = new Cart(req.session.cart);
   res.render('shop/shopping-cart', {products: cart.generateArray(), totalPrice: cart.totalPrice});
 });
 
-router.get('/checkout', function(req, res, next){
-  if(!req.session.cart){
-    return res.redirect('/shopping-cart');
-  }
-  const cart = new Cart(req.session.cart);
-  res.render('shop/checkout', {total: cart.totalPrice});
-});
+// router.get('/checkout', function(req, res, next){
+//   if(!req.session.cart){
+//     return res.redirect('/shopping-cart');
+//   }
+//   const cart = new Cart(req.session.cart);
+//   res.render('shop/checkout', {total: cart.totalPrice});
+// });
 
 router.post('/pay', function(req, res, next){
-  //your secret key: remember to change this to your live secret key in production
-  // See your keys here: https://dashboard.stripe.com/account/apikeys
-  var stripe = require("stripe")("sk_test_RUZ8p3YSy0CssqkFy9r7zkI3");
+  if(!req.session.cart){
+    return res.redirect('shopping-cart');
+  }
 
-  // Token is created using Stripe.js or Checkout!
-  // Get the payment token submitted by the form:
-  var token = req.body.stripeToken; // Using Express
+  const cart = new Cart(req.session.cart);
+
+  const token = req.body.stripeToken;
   console.log(req.body);
 
-  // Charge the user's card:
-  var charge = stripe.charges.create({
-   amount: req.session.cart.totalPrice+'00',
+  // Charge the user's card
+  const charge = stripe.charges.create({
+   amount: req.session.cart.totalPrice * 100,
    currency: "usd",
    description: "Example charge",
    source: token,
@@ -67,9 +68,9 @@ router.post('/pay', function(req, res, next){
     if(err){
       return err;
     }
-    return charge;
+    req.session.cart = null;
+    res.redirect('/');
   });
-  res.redirect('/');
 });
 
 module.exports = router;
