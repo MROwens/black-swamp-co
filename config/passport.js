@@ -45,3 +45,32 @@ passport.use('local.signup', new LocalStrategy({
     });
   });
 }));
+
+passport.use('local.signin', new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'password',
+  passReqToCallback: true
+}, function(req, email, password, done){
+  req.checkBody('email', 'Invalid email').notEmpty().isEmail();
+  req.checkBody('password', 'Enter password').notEmpty();
+  const errors = req.validationErrors();
+  if(errors){
+    const messages = [];
+    errors.forEach(function(error){
+      messages.push(error.msg);
+    });
+    return done(null, false, req.flash('error', messages));
+  }
+  User.findOne({'email': email}, function(err, user){
+    if(err){
+      return done(err);
+    }
+    if(!user){
+      return  done(null, false, {message: 'User not found'});
+    }
+    if(!user.validPassword(password)){
+      return  done(null, false, {message: 'Incorrect password'});
+    }
+    return done(null, user);
+  });
+}));
