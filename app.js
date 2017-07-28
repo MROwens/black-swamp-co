@@ -31,7 +31,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(validator());
-app.use(cookieParser());
+app.use(cookieParser('shhh'));
 app.use(session({
   secret: 'shhh',
   resave: false,

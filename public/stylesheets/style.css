@@ -1,3 +1,21 @@
+body{
+  background: url('../images/background_dark.jpg') center;
+}
+
+.signup, .signin, .total, .profile, .nothing-here{
+  color: #F9F0DC;
+}
+
+.navbar{
+  height: 100px;
+}
+
+.logo{
+  width: 100px;
+  height: 100px;
+  margin-top: -15px;
+}
+
 .thumbnail img{
   max-height: 200px;
 }

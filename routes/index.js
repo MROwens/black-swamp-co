@@ -1,7 +1,9 @@
 const express = require('express');
 const Product = require('../models/product');
 const Cart = require('../models/cart');
+const Order = require('../models/order');
 const stripe = require("stripe")("sk_test_RUZ8p3YSy0CssqkFy9r7zkI3");
+const passport = require('passport');
 const router = express.Router();
 
 
@@ -30,6 +32,24 @@ router.get('/add-to-cart/:id', function(req, res, next){
     console.log(req.session.cart);
     res.redirect('/');
   });
+});
+
+router.get('/remove/:id', function(req, res, next){
+  const productId = req.params.id;
+  const cart = new Cart(req.session.cart ? req.session.cart : {});
+
+  cart.reduceByOne(productId);
+  req.session.cart = cart;
+  res.redirect('/shopping-cart');
+});
+
+router.get('/remove-all/:id', function(req, res, next){
+  const productId = req.params.id;
+  const cart = new Cart(req.session.cart ? req.session.cart : {});
+
+  cart.removeItem(productId);
+  req.session.cart = cart;
+  res.redirect('/shopping-cart');
 });
 
 router.get('/shopping-cart', function(req, res, next){
@@ -62,14 +82,30 @@ router.post('/pay', function(req, res, next){
   const charge = stripe.charges.create({
    amount: req.session.cart.totalPrice * 100,
    currency: "usd",
-   description: "Example charge",
+   description: "Black Swamp Co.",
    source: token,
   }, function(err, charge) {
     if(err){
       return err;
     }
-    req.session.cart = null;
-    res.redirect('/');
+    const order = new Order({
+      user: req.user,
+      cart: cart,
+      address: {
+        state: req.body.stripeShippingAddressState,
+        city: req.body.stripeShippingAddressCity,
+        street: req.body.stripeShippingAddressLine1,
+        zip: req.stripeShippingAddressZip
+      },
+      name: req.body.stripeShippingName,
+      paymentId: charge.id
+    });
+    order.save(function(err, result){
+      //try email here
+      req.session.cart = null;
+      res.redirect('/');
+    });
+
   });
 });
 

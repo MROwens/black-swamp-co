@@ -10,8 +10,8 @@
         <div class="button-group">
           <button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown">Action <span class="caret"></span></button>
           <ul class="dropdown-menu">
-            <li href="#">Remove One</li>
-            <li href="#">Remove All</li>
+            <li><a href="/remove/{{this.item._id}}">Remove One</a></li>
+            <li><a href="/remove-all/{{this.item._id}}">Remove All</a></li>
           </ul>
         </div>
       </li>
@@ -20,13 +20,14 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offest-3">
+  <div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offest-3 total">
     <strong>Total: ${{this.totalPrice}} </strong>
   </div>
 </div>
 <div class="row">
   <div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offest-3">
     {{!-- <a href="/checkout" type="button" class="btn btn-success">Checkout</a> --}}
+    {{# if login}}
     <form action='/pay' method="post">
       <script
         src="https://checkout.stripe.com/checkout.js" class="stripe-button"
@@ -43,11 +44,16 @@
         data-locale="auto">
       </script>
     </form>
+    {{else}}
+      <h4>You need to be logged in to make a purchase.</h4>
+      <a href="/user/signin" class="btn btn-primary">Sign In</a>
+      <p>Don't have an account? <a href="/user/signup" >Make one!</a></p>
+    {{/if}}
   </div>
 </div>
 {{else}}
 <div class="row">
-  <div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offest-3">
+  <div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offest-3 nothing-here">
     <h2>There doesn't seem to be anything here.</h2>
     <p><a href="/">Return to Store?</a></p>
   </div>
