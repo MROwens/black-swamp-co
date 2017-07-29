@@ -4,6 +4,7 @@ const Cart = require('../models/cart');
 const Order = require('../models/order');
 const stripe = require("stripe")("sk_test_RUZ8p3YSy0CssqkFy9r7zkI3");
 const passport = require('passport');
+const nodemailer = require('nodemailer');
 const router = express.Router();
 
 
@@ -101,7 +102,39 @@ router.post('/pay', function(req, res, next){
       paymentId: charge.id
     });
     order.save(function(err, result){
-      //try email here
+
+      //#############
+
+      // create reusable transporter object using the default SMTP transport
+      let transporter = nodemailer.createTransport({
+          service: 'gmail',
+          port: 25,
+          secure: false, // secure:true for port 465, secure:false for port 587
+          auth: {
+              user: 'nodemailertest23@gmail.com',
+              pass: 'veryweakpassword'
+          }
+      });
+
+      // setup email data with unicode symbols
+      let mailOptions = {
+          from: '"Black Swamp Co." <mrowens0594@gmail.com>', // sender address
+          to: req.body.stripeEmail, // list of receivers
+          subject: 'Order Confirmation', // Subject line
+          html: '<h1>Black Swamp Co.</h1><h4>Order Confirmation</h4><p>Hello '+req.body.stripeBillingName+', thank you for your purchase!</p><p>Your package will be shipped to the following address:</p><ul style="list-style-type: none;"><li>Street Address: '+req.body.stripeShippingAddressLine1+'</li><li>City: '+req.body.stripeShippingAddressCity+' | State: '+req.body.stripeShippingAddressState+' | Zip: '+req.body.stripeShippingAddressZip+'</li><li>Country: '+req.body.stripeShippingAddressCountry+'</li></ul>', // end html
+      };
+
+      // send mail with defined transport object
+      transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+              return console.log(error);
+          }
+          console.log('Message %s sent: %s', info.messageId, info.response);
+      });
+
+      //##############
+
+
       req.session.cart = null;
       res.redirect('/');
     });
