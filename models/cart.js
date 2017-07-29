@@ -2,7 +2,7 @@ module.exports = function Cart(oldCart){
   this.items = oldCart.items || {};
   this.totalQty = oldCart.totalQty || 0;
   this.totalPrice = oldCart.totalPrice || 0;
-
+  //add items to cart
   this.add = function(item, id){
     let storedItem = this.items[id];
     if(!storedItem){
@@ -13,7 +13,7 @@ module.exports = function Cart(oldCart){
     this.totalQty++;
     this.totalPrice += storedItem.item.price;
   };
-
+  //remove one item method
   this.reduceByOne = function(id){
     this.items[id].qty--;
     this.items[id].price -= this.items[id].item.price;
@@ -24,13 +24,13 @@ module.exports = function Cart(oldCart){
       delete this.items[id];
     }
   };
-
+  //remove all of one item method
   this.removeItem = function(id){
     this.totalQty -= this.items[id].qty;
     this.totalPrice -= this.items[id].price;
     delete this.items[id];
   };
-
+  //method to put items into array for view loop
   this.generateArray = function(){
     const arr = [];
     for(let id in this.items){

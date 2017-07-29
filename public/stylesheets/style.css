@@ -1,9 +1,47 @@
 body{
-  background: url('../images/background_dark.jpg') center;
+  background: url('../images/background_dark.jpg') center no-repeat fixed;
 }
 
-.signup, .signin, .total, .profile, .nothing-here{
+.nav a, .nav span{
+  font-size: 1.8rem;
   color: #F9F0DC;
+}
+
+.nav li{
+  margin-top: 18px;
+}
+
+.navbar{
+  background: #161718;
+  border-top: 2px solid #161718;
+  border-right: 2px solid #161718;
+  border-left: 2px solid #161718;
+}
+
+.thumbnail{
+  border: 1px solid #161718;
+}
+
+.btn{
+  background: #161718;
+  color: #F9F0DC;
+  border: none;
+}
+
+.btn:hover{
+  background: #282C34;
+}
+
+.signup, .signin, .total, .profile, .nothing-here, .order-history, .login-req{
+  color: #F9F0DC;
+}
+
+.total{
+  font-size: 2rem;
+}
+
+.store-price{
+  font-size: 2rem;
 }
 
 .navbar{

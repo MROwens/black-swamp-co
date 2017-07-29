@@ -45,9 +45,11 @@
       </script>
     </form>
     {{else}}
-      <h4>You need to be logged in to make a purchase.</h4>
-      <a href="/user/signin" class="btn btn-primary">Sign In</a>
-      <p>Don't have an account? <a href="/user/signup" >Make one!</a></p>
+      <div class="login-req">
+        <h4>You need to be logged in to make a purchase.</h4>
+        <a href="/user/signin" class="btn btn-primary">Sign In</a>
+        <p>Don't have an account? <a href="/user/signup" >Make one!</a></p>
+      </div>
     {{/if}}
   </div>
 </div>

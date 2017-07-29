@@ -8,9 +8,10 @@ const nodemailer = require('nodemailer');
 const router = express.Router();
 
 
-/* GET home page. */
+//get home page | make db store items available
 router.get('/', function(req, res, next) {
   const products = Product.find(function(err, dbItems){
+    //breaking product returns into chunks 
     let productChunks = [];
     const chunkSize = 3;
     for(let product = 0; product < dbItems.length; product += chunkSize){
@@ -19,7 +20,7 @@ router.get('/', function(req, res, next) {
     res.render('shop/index', { title: 'Shop', products: productChunks });
   });
 });
-
+//adding items to cart via item id
 router.get('/add-to-cart/:id', function(req, res, next){
   const productId = req.params.id;
   const cart = new Cart(req.session.cart ? req.session.cart : {});
@@ -34,7 +35,7 @@ router.get('/add-to-cart/:id', function(req, res, next){
     res.redirect('/');
   });
 });
-
+//remove one of one item
 router.get('/remove/:id', function(req, res, next){
   const productId = req.params.id;
   const cart = new Cart(req.session.cart ? req.session.cart : {});
@@ -43,7 +44,7 @@ router.get('/remove/:id', function(req, res, next){
   req.session.cart = cart;
   res.redirect('/shopping-cart');
 });
-
+//remove all of one item
 router.get('/remove-all/:id', function(req, res, next){
   const productId = req.params.id;
   const cart = new Cart(req.session.cart ? req.session.cart : {});
@@ -52,7 +53,7 @@ router.get('/remove-all/:id', function(req, res, next){
   req.session.cart = cart;
   res.redirect('/shopping-cart');
 });
-
+//load shopping cart
 router.get('/shopping-cart', function(req, res, next){
   if(!req.session.cart){
     return res.render('shop/shopping-cart', {products: null});
@@ -60,28 +61,20 @@ router.get('/shopping-cart', function(req, res, next){
   const cart = new Cart(req.session.cart);
   res.render('shop/shopping-cart', {products: cart.generateArray(), totalPrice: cart.totalPrice});
 });
-
-// router.get('/checkout', function(req, res, next){
-//   if(!req.session.cart){
-//     return res.redirect('/shopping-cart');
-//   }
-//   const cart = new Cart(req.session.cart);
-//   res.render('shop/checkout', {total: cart.totalPrice});
-// });
-
+//stripe payment
 router.post('/pay', function(req, res, next){
   if(!req.session.cart){
     return res.redirect('shopping-cart');
   }
 
-  const cart = new Cart(req.session.cart);
+  const cart = new Cart(req.session.cart);//instantiating cart for payment order
 
   const token = req.body.stripeToken;
   console.log(req.body);
 
   // Charge the user's card
   const charge = stripe.charges.create({
-   amount: req.session.cart.totalPrice * 100,
+   amount: req.session.cart.totalPrice * 100, //takes in amout in cents
    currency: "usd",
    description: "Black Swamp Co.",
    source: token,
@@ -89,7 +82,7 @@ router.post('/pay', function(req, res, next){
     if(err){
       return err;
     }
-    const order = new Order({
+    const order = new Order({ //new order object for shipping info
       user: req.user,
       cart: cart,
       address: {
@@ -99,13 +92,11 @@ router.post('/pay', function(req, res, next){
         zip: req.stripeShippingAddressZip
       },
       name: req.body.stripeShippingName,
-      paymentId: charge.id
+      paymentId: charge.id //payment id matched to stripe charge
     });
     order.save(function(err, result){
-
-      //#############
-
-      // create reusable transporter object using the default SMTP transport
+      //confirmation emial
+      // create transporter object
       let transporter = nodemailer.createTransport({
           service: 'gmail',
           port: 25,
@@ -116,7 +107,7 @@ router.post('/pay', function(req, res, next){
           }
       });
 
-      // setup email data with unicode symbols
+      // setup email data
       let mailOptions = {
           from: '"Black Swamp Co." <mrowens0594@gmail.com>', // sender address
           to: req.body.stripeEmail, // list of receivers
@@ -131,10 +122,7 @@ router.post('/pay', function(req, res, next){
           }
           console.log('Message %s sent: %s', info.messageId, info.response);
       });
-
-      //##############
-
-
+      //empty cart after purchase
       req.session.cart = null;
       res.redirect('/');
     });

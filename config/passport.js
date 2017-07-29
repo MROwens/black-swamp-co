@@ -1,7 +1,7 @@
 const passport = require('passport');
 const User = require('../models/user');
 const LocalStrategy = require('passport-local').Strategy;
-
+//passport configurations
 passport.serializeUser(function(user, done){
   done(null, user.id);
 });
@@ -11,7 +11,7 @@ passport.deserializeUser(function(id, done){
     done(err, user);
   });
 });
-
+//passport strategy for user signup
 passport.use('local.signup', new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password',
@@ -45,7 +45,7 @@ passport.use('local.signup', new LocalStrategy({
     });
   });
 }));
-
+//passport strategy for user signin
 passport.use('local.signin', new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password',

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
+//product table model
 const schema = new Schema({
   imagePath:{type: String, required: true},
   title:{type: String, required: true},

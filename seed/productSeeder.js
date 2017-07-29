@@ -1,10 +1,10 @@
 const Product = require('../models/product');
 const mongoose = require('mongoose');
-
+//mongoose db connection
 mongoose.connect('localhost:27017/store');
 mongoose.Promise = global.Promise;
 
-
+//seed inital data into database
 const products = [
   new Product({
     imagePath: 'flail.jpg',
@@ -37,7 +37,7 @@ const products = [
     price: 12
   })
 ];
-
+//async fix
 let done = 0;
 for(let entry = 0; entry < products.length; entry++){
   products[entry].save(function(err, result){
@@ -47,7 +47,7 @@ for(let entry = 0; entry < products.length; entry++){
     }
   });
 }
-
+//close mongoose 
 function exit(){
   mongoose.disconnect();
   console.log('Data Seeded');

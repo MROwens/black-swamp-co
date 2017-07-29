@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
+//order table model
 const schema = new Schema({
   user:{type: Schema.Types.ObjectId, ref: 'User'},
   cart:{type: Object, required: true},

@@ -1,7 +1,7 @@
 <div class="row">
   <h1 class="profile">User Profile</h1>
   <div class="col-md-8 col-md-offset-2">
-    <h2>Order History</h2>
+    <h2 class="order-history">Order History</h2>
     {{# each orders }}
       <div class="panel panel-default">
         <div class="panel-body">
@@ -16,6 +16,7 @@
         </div>
         <div class="panel-footer">Order Total: ${{this.cart.totalPrice}}</div>
       </div>
+      <h2>There doesn't seem to be anything here. Make some orders! <a href="/">Store</a></h2>
     {{/each}}
   </div>
 </div>

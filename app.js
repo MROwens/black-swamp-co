@@ -16,7 +16,7 @@ const routes = require('./routes/index');
 const userRoutes = require('./routes/user')
 
 const app = express();
-
+//mongoose db config
 mongoose.connect('localhost:27017/store');
 mongoose.Promise = global.Promise;
 require('./config/passport');
@@ -39,6 +39,7 @@ app.use(session({
   store: new MongoStore({mongooseConnection: mongoose.connection}),
   cookie: {masAge: 180 * 60 *1000}
 }));
+//passport & session setup
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -50,9 +51,10 @@ app.use(function(req, res, next){
   next();
 });
 
+//append routes for users
 app.use('/user', userRoutes);
-app.use('/', routes);
-
+app.use('/', routes);//non user routes
+//simplier image pathing
 app.use(express.static('public/images'));
 
 // catch 404 and forward to error handler
