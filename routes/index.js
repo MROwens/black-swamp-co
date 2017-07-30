@@ -11,7 +11,7 @@ const router = express.Router();
 //get home page | make db store items available
 router.get('/', function(req, res, next) {
   const products = Product.find(function(err, dbItems){
-    //breaking product returns into chunks 
+    //breaking product returns into chunks
     let productChunks = [];
     const chunkSize = 3;
     for(let product = 0; product < dbItems.length; product += chunkSize){
@@ -95,7 +95,7 @@ router.post('/pay', function(req, res, next){
       paymentId: charge.id //payment id matched to stripe charge
     });
     order.save(function(err, result){
-      //confirmation emial
+      //confirmation email
       // create transporter object
       let transporter = nodemailer.createTransport({
           service: 'gmail',
