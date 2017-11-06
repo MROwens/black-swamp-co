@@ -10,7 +10,7 @@ const router = express.Router();
 
 //get home page | make db store items available
 router.get('/', function(req, res, next) {
-  const products = Product.find(function(err, dbItems){
+  const products = Product.find(function(err, dbItems){ 
     //breaking product returns into chunks
     let productChunks = [];
     const chunkSize = 3;
